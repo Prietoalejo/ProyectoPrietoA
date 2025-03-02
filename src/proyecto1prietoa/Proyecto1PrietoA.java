@@ -6,7 +6,7 @@ package proyecto1prietoa;
 
 /**
  *
- * @author andre
+ * @author Prietoalejo
  */
 public class Proyecto1PrietoA {
 
