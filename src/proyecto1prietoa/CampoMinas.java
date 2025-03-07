@@ -9,69 +9,82 @@ package proyecto1prietoa;
  * @author Prietoalejo
  */
 public class CampoMinas {
-   
-    
+    private Casilla[][] matriz;
     private int filas;
     private int columnas;
-    private Adyacentes[][] cuadrícula;
 
-    public CampoMinas(int filas, int columnas) {
-        this.filas = filas;
-        this.columnas = columnas;
-        cuadrícula = new Adyacentes[filas][columnas];
-        crearCuadrícula();
+    public CampoMinas(int m, int n) {
+        this.filas = m;
+        this.columnas = n;
+        this.matriz = new Casilla[m][n];
+        crearCuadricula();
     }
 
-
-    private void crearCuadrícula() {
+    private void crearCuadricula() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
-                cuadrícula[i][j] = new Adyacentes(); 
-                String id = "C" + i + "_" + j; 
-                insertarCasilla(i, j, id);
+                String id = String.valueOf((char) ('A' + i)) + (j + 1);
+                matriz[i][j] = new Casilla(id);
             }
         }
+        conectarCasillas();
+    }
 
+    private void conectarCasillas() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
-                crearAristas(i, j);
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1; y <= 1; y++) {
+                        if (x == 0 && y == 0) continue; 
+                        int nuevoI = i + x;
+                        int nuevoJ = j + y;
+                        if (nuevoI >= 0 && nuevoI < filas && nuevoJ >= 0 && nuevoJ < columnas) {
+                            matriz[i][j].adyacentes.insertar(matriz[nuevoI][nuevoJ].id);
+                        }
+                    }
+                }
             }
         }
     }
 
-
-    private void insertarCasilla(int fila, int columna, String id) {
-        cuadrícula[fila][columna].insertar(id);
-    }
-
-
-    private void crearAristas(int fila, int columna) {
-
-        int[][] direcciones = {
-            {-1, -1}, {-1, 0}, {-1, 1},
-            {0, -1},           {0, 1},
-            {1, -1}, {1, 0}, {1, 1}
-        };
-
-
-        String idActual = "C" + fila + "_" + columna;
-
-        for (int[] dir : direcciones) {
-            int nuevaFila = fila + dir[0];
-            int nuevaColumna = columna + dir[1];
-
-         
-            if (nuevaFila >= 0 && nuevaFila < filas && nuevaColumna >= 0 && nuevaColumna < columnas) {
-                String idAdyacente = "C" + nuevaFila + "_" + nuevaColumna;
-                cuadrícula[fila][columna].insertar(idAdyacente); 
-            }
-        }
-    }
-
-    public void imprimirCuadrícula() {
+    public void mostrarGrafo() {
         for (int i = 0; i < filas; i++) {
-            System.out.print("Fila " + i + ": ");
-            cuadrícula[i][0].imprimir(); 
+            for (int j = 0; j < columnas; j++) {
+                System.out.print("Casilla " + matriz[i][j].id + ": ");
+                matriz[i][j].adyacentes.imprimir();
+            }
         }
     }
+public void dibujarGrafo() {
+    // Dibujar la cuadrícula
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            System.out.print(matriz[i][j].id + " ");
+            if (j < columnas - 1) {
+                System.out.print(" - ");
+            }
+        }
+        System.out.println();
+
+        if (i < filas - 1) {
+            for (int j = 0; j < columnas; j++) {
+
+                System.out.print(" | ");
+                if (j < columnas - 1) {
+                    System.out.print("   ");
+                }
+            }
+            System.out.println(); 
+        }
+    }
+    
+    System.out.println("\nAdyacencias:");
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            System.out.print("Casilla " + matriz[i][j].id + ": ");
+            matriz[i][j].adyacentes.imprimir();
+        }
+    }
+}
+
 }
