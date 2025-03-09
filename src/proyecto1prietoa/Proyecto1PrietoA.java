@@ -14,24 +14,30 @@ public class Proyecto1PrietoA {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    // Crear un campo de minas de 5x5
-    CampoMinas campo = new CampoMinas(5, 5);
-    
-    // Marcar 5 bombas en el campo
-    campo.marcarBombas(5);
-    
-    // Dibujar el estado inicial del campo
-    campo.dibujarGrafo();
-    
-    // Inicializar la matriz de visitadas
-    boolean[][] visitadas = new boolean[5][5];
-    
-    // Simular un clic en la casilla A1 (que corresponde a matriz[0][0])
-    Adyacentes recorrido = campo.bfs(campo.matriz[0][0], visitadas);
-    
-    // Mostrar las casillas visitadas
-    System.out.println("Casillas visitadas:");
-    recorrido.imprimir();
+        CampoMinas campo = new CampoMinas(5, 5);
+        
+        campo.marcarBombas(5);        
+        for (int i = 0; i < campo.filas; i++) {
+            for (int j = 0; j < campo.columnas; j++) {
+                Casilla casilla = campo.matriz[i][j];
+                System.out.print(casilla.id + "(M:" + casilla.mina + ", R:" + casilla.mostrada + ", B:" + casilla.bandera + ") ");
+            }
+            System.out.println();
+        }
+        LectorCSV partidaCsv = new LectorCSV();
+        String nombreArchivo = "partida_buscaminas.csv";
+        partidaCsv.guardarPartidaCSV(nombreArchivo, campo);
+        System.out.println("Partida guardada en: " + nombreArchivo);        
+        CampoMinas nuevoCampo = partidaCsv.leerPartidaCSV(nombreArchivo);
+        System.out.println("Partida cargada desde: " + nombreArchivo);        
+        System.out.println("Estado del campo cargado:");
+        for (int i = 0; i < nuevoCampo.filas; i++) {
+            for (int j = 0; j < nuevoCampo.columnas; j++) {
+                Casilla casilla = nuevoCampo.matriz[i][j];
+                System.out.print(casilla.id + "(M:" + casilla.mina + ", R:" + casilla.mostrada + ", B:" + casilla.bandera + ") ");
+            }
+            System.out.println();
+        }
 }
     
     
