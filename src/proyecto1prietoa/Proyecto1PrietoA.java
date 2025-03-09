@@ -4,6 +4,8 @@
  */
 package proyecto1prietoa;
 
+import Ventanas.Tablero;
+
 /**
  *
  * @author Prietoalejo
@@ -38,6 +40,8 @@ public class Proyecto1PrietoA {
             }
             System.out.println();
         }
+        
+        Tablero t = new Tablero();
 }
     
     

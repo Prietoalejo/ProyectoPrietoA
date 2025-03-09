@@ -4,6 +4,24 @@
  */
 package Ventanas;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
+
 /**
  *
  * @author andre
@@ -15,6 +33,66 @@ public class Tablero extends javax.swing.JFrame {
      */
     public Tablero() {
         initComponents();
+        int filas = 8;
+        int columnas = 8;
+               setTitle("Ventana con Tablero");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Panel que ocupa toda la ventana
+        JPanel panelFondo = new JPanel();
+        panelFondo.setBackground(Color.LIGHT_GRAY); // Color de fondo
+        add(panelFondo, BorderLayout.CENTER); // Agregar al centro
+
+        // Crear el tablero
+        JPanel tablero = crearTablero(filas, columnas);
+        
+        // Panel inferior centrado
+        JPanel panelInferior = new JPanel();
+        panelInferior.setBackground(Color.BLUE); // Color de fondo
+        panelInferior.setLayout(new FlowLayout(FlowLayout.CENTER)); // Usar FlowLayout para centrar
+
+        // Ajustar el tamaño preferido del panel inferior
+        panelInferior.setPreferredSize(new Dimension(0, (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.7))); // 70% de la altura de la pantalla
+
+        // Agregar el tablero al panel inferior
+        panelInferior.add(tablero); // Agregar el tablero al panel inferior
+
+        add(panelInferior, BorderLayout.SOUTH); // Agregar el panel inferior al sur
+
+        setSize(Toolkit.getDefaultToolkit().getScreenSize()); // Tamaño de la ventana igual al tamaño de la pantalla
+        setVisible(true);
+    }
+
+    private JPanel crearTablero(int filas, int columnas) {
+        JPanel panelTablero = new JPanel();
+        panelTablero.setLayout(new GridLayout(filas, columnas));
+        
+        // Calcular el tamaño del panel del tablero para que sea cuadrado
+        int size = (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.6 / Math.max(filas, columnas));
+        panelTablero.setPreferredSize(new Dimension(size * columnas, size * filas)); // Ajustar el tamaño del panel
+
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                String nombreCasilla = String.valueOf((char) ('A' + i)) + (j + 1);
+                JToggleButton boton = new JToggleButton(nombreCasilla);
+                boton.setPreferredSize(new Dimension(size, size)); // Establecer tamaño preferido para los botones
+                
+                boton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (boton.isSelected()) {
+                            System.out.println("Botón " + nombreCasilla + " seleccionado.");
+                        } else {
+                            System.out.println("Botón " + nombreCasilla + " deseleccionado.");
+                        }
+                    }
+                });
+                panelTablero.add(boton);
+            }
+        }
+
+        return panelTablero;
     }
 
     /**
@@ -26,18 +104,12 @@ public class Tablero extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -78,5 +150,6 @@ public class Tablero extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
