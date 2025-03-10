@@ -14,7 +14,7 @@ public class CampoMinas {
     public Casilla[][] matriz;
     public int filas;
     public int columnas;
-
+    
     public CampoMinas(int m, int n) {
         this.filas = m;
         this.columnas = n;
@@ -186,6 +186,19 @@ public Adyacentes bfs(Casilla casilla, boolean[][] visitadas) {
     }
 
     return casillasVisitadas;
+}
+
+public Casilla buscarID(String id) {
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                if (matriz[i][j] != null && matriz[i][j].id.equals(id)) {
+                    return matriz[i][j];
+                }
+            }
+        }
+        return null;
+    
+
 }
 
 }

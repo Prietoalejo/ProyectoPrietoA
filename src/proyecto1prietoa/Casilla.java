@@ -9,12 +9,12 @@ package proyecto1prietoa;
  * @author Prietoalejo
  */
 public class Casilla {
-    Casilla siguiente;
-    boolean mina;
-    boolean bandera;
-    String id;
-    Adyacentes adyacentes;
-    boolean mostrada;
+    public Casilla siguiente;
+    public boolean mina;
+    public boolean bandera;
+    public String id;
+    public Adyacentes adyacentes;
+    public boolean mostrada;
 
     public Casilla(String id) {
         this.id = id;

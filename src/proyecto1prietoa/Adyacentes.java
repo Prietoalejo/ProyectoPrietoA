@@ -9,8 +9,8 @@ package proyecto1prietoa;
  * @author Prietoalejo
  */
 public class Adyacentes {
-  Casilla primera;
-  int tamano;
+  public Casilla primera;
+  public int tamano;
   
   public Adyacentes(){
       primera = null;

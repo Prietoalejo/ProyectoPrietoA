@@ -6,85 +6,243 @@ package Ventanas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import proyecto1prietoa.Adyacentes;
+import proyecto1prietoa.CampoMinas;
+import proyecto1prietoa.Casilla;
+import proyecto1prietoa.LectorCSV;
 
 /**
  *
- * @author andre
+ * @author Prietoalejo
  */
 public class Tablero extends javax.swing.JFrame {
+
+    public static CampoMinas campo;
+    boolean bandera;
+    public static boolean DFS;
 
     /**
      * Creates new form Tablero
      */
-    public Tablero() {
+    public Tablero(CampoMinas campo, boolean DFS) {
         initComponents();
-        int filas = 8;
-        int columnas = 8;
-               setTitle("Ventana con Tablero");
+        this.campo = campo;
+        this.DFS = DFS;
+        bandera = false;
+        setTitle("Ventana con Tablero");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Panel que ocupa toda la ventana
         JPanel panelFondo = new JPanel();
-        panelFondo.setBackground(Color.LIGHT_GRAY); // Color de fondo
-        add(panelFondo, BorderLayout.CENTER); // Agregar al centro
+        panelFondo.setBackground(Color.LIGHT_GRAY);
+        add(panelFondo, BorderLayout.CENTER); 
 
-        // Crear el tablero
-        JPanel tablero = crearTablero(filas, columnas);
+        JPanel panelSuperior = new JPanel();
+        panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.Y_AXIS)); 
+        String modo;
+        if(this.DFS){
+          modo = "(DFS)";  
+        }else{
+            modo = "(BFS)";
+        }
+        JLabel titulo = new JLabel("Juego de Buscaminas");
+        titulo.setFont(new Font("STHupo", Font.BOLD, 48)); 
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT); 
+        panelSuperior.add(titulo);
+
+
+        panelSuperior.add(Box.createRigidArea(new Dimension(0, 40))); 
+
+   
+        JPanel panelBotones = new JPanel();
+        panelBotones.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        JButton btnGuardar = new JButton("Guardar Partida");
+        btnGuardar.setFont(new Font("STHupo", Font.PLAIN, 24)); 
+        btnGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                LectorCSV l = new LectorCSV();
+                l.guardarPartidaCSV(buscarArchivo(), campo);
+                System.out.println("Partida guardada.");
+            }
+        });
+        panelBotones.add(btnGuardar);
+        panelBotones.add(Box.createRigidArea(new Dimension(10, 0))); 
+
+
+        JButton btnSalir = new JButton("Salir");
+        btnSalir.setFont(new Font("STHupo", Font.PLAIN, 24)); 
+        btnSalir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuPrincipal m = new MenuPrincipal();
+                salir();
+            }
+        });
+        panelBotones.add(btnSalir);
+        panelBotones.add(Box.createRigidArea(new Dimension(10, 0))); 
+
+     
+        JToggleButton btnBandera = new JToggleButton("🏴");
+        btnBandera.setFont(new Font("DEFAULT", Font.PLAIN, 20)); 
+
+        btnBandera.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bandera = !bandera; 
+
+            }
+        });
+        panelBotones.add(btnBandera);
+
+  
+        panelSuperior.add(panelBotones);
+
+
+        panelFondo.setLayout(new BorderLayout());
+        panelFondo.add(panelSuperior, BorderLayout.NORTH);
+
         
-        // Panel inferior centrado
+        JPanel tablero = crearTablero(campo.filas, campo.columnas);
+
+     
         JPanel panelInferior = new JPanel();
-        panelInferior.setBackground(Color.BLUE); // Color de fondo
-        panelInferior.setLayout(new FlowLayout(FlowLayout.CENTER)); // Usar FlowLayout para centrar
+        panelInferior.setLayout(new FlowLayout(FlowLayout.CENTER)); 
 
-        // Ajustar el tamaño preferido del panel inferior
-        panelInferior.setPreferredSize(new Dimension(0, (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.7))); // 70% de la altura de la pantalla
+    
+        panelInferior.setPreferredSize(new Dimension(0, (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.7)));
 
-        // Agregar el tablero al panel inferior
-        panelInferior.add(tablero); // Agregar el tablero al panel inferior
+        panelInferior.add(tablero);
 
-        add(panelInferior, BorderLayout.SOUTH); // Agregar el panel inferior al sur
+        panelFondo.add(panelInferior, BorderLayout.CENTER); 
 
-        setSize(Toolkit.getDefaultToolkit().getScreenSize()); // Tamaño de la ventana igual al tamaño de la pantalla
+        setSize(Toolkit.getDefaultToolkit().getScreenSize());
         setVisible(true);
+    }
+
+    public void salir() {
+        this.dispose();
     }
 
     private JPanel crearTablero(int filas, int columnas) {
         JPanel panelTablero = new JPanel();
         panelTablero.setLayout(new GridLayout(filas, columnas));
-        
-        // Calcular el tamaño del panel del tablero para que sea cuadrado
+
         int size = (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.6 / Math.max(filas, columnas));
-        panelTablero.setPreferredSize(new Dimension(size * columnas, size * filas)); // Ajustar el tamaño del panel
+        panelTablero.setPreferredSize(new Dimension(size * columnas, size * filas)); 
 
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
                 String nombreCasilla = String.valueOf((char) ('A' + i)) + (j + 1);
                 JToggleButton boton = new JToggleButton(nombreCasilla);
-                boton.setPreferredSize(new Dimension(size, size)); // Establecer tamaño preferido para los botones
-                
+                boton.setName(nombreCasilla);
+                boton.setForeground(Color.black);
+                boton.setBackground(Color.LIGHT_GRAY); 
+                boton.setOpaque(true);
+                boton.setPreferredSize(new Dimension(size, size));
+                marcarCasilla(boton, panelTablero);
                 boton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (boton.isSelected()) {
-                            System.out.println("Botón " + nombreCasilla + " seleccionado.");
+                            boton.setForeground(Color.RED);
+                            Casilla casilla = campo.buscarID(boton.getName());
+                            if (bandera && !casilla.bandera) {
+                                boton.setText("🏴");
+                                boton.setForeground(Color.red);
+
+                                casilla.bandera = true;
+                                return;
+                            } else if (bandera && casilla.bandera) {
+                                boton.setText(boton.getName());
+                                boton.setForeground(Color.black);
+
+                                casilla.bandera = false;
+                                return;
+                            } else if (!bandera && casilla.bandera) {
+                                return;
+                            }
+                            if (casilla.mina) {
+                                JOptionPane.showMessageDialog(rootPane, "HAS PERDIDO");
+                            } else {
+                                Adyacentes lista;
+                                if (DFS) {
+                                    lista = campo.dfs(casilla, new boolean[campo.filas][campo.columnas]);
+                                } else {
+                                    lista = campo.bfs(casilla, new boolean[campo.filas][campo.columnas]);
+                                }
+
+                                Casilla actual = lista.primera;
+                                while (actual != null) {
+   
+                                    for (Component comp : panelTablero.getComponents()) {
+                                        if (comp instanceof JToggleButton) {
+                                            JToggleButton botonCasilla = (JToggleButton) comp;
+                                            if (botonCasilla.getText().equals(actual.id)) {
+                                                int minasAlrededor = campo.contarBombasAlrededor(actual);
+                                                campo.buscarID(actual.id).mostrada = true;
+
+                                                if (minasAlrededor == 0) {
+                                                    botonCasilla.setText(String.valueOf(""));
+
+                                                } else {
+                                                    botonCasilla.setText(String.valueOf(minasAlrededor));
+
+                                                }
+
+                                                botonCasilla.setSelected(true);
+
+                                                botonCasilla.setBackground(Color.BLACK);
+                                                botonCasilla.setEnabled(false);
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    actual = actual.siguiente;
+                                }
+                            }
+
                         } else {
-                            System.out.println("Botón " + nombreCasilla + " deseleccionado.");
+                            Casilla casilla = campo.buscarID(boton.getName());
+
+                            if (bandera && !casilla.bandera) {
+                                boton.setText("🏴");
+                                casilla.bandera = true;
+//                                boton.setEnabled(false);
+                                return;
+                            } else if (bandera && casilla.bandera) {
+                                boton.setText(boton.getName());
+                                boton.setForeground(Color.black);
+
+                                casilla.bandera = false;
+                                return;
+                            } else if (!bandera && casilla.bandera) {
+                                return;
+                            }
                         }
                     }
                 });
@@ -93,6 +251,51 @@ public class Tablero extends javax.swing.JFrame {
         }
 
         return panelTablero;
+    }
+
+    public void marcarCasilla(JToggleButton boton, JPanel panelTablero) {
+        Casilla casilla = campo.buscarID(boton.getName());
+        if (casilla.bandera) {
+            boton.setText("🏴");
+            boton.setForeground(Color.RED);
+
+            boton.setSelected(true);
+            return;
+        }
+        if (casilla.mostrada) {
+            int minasAlrededor = campo.contarBombasAlrededor(casilla);
+            if (minasAlrededor == 0) {
+                boton.setText(String.valueOf(""));
+
+            } else {
+                boton.setText(String.valueOf(minasAlrededor));
+
+            }
+
+            boton.setSelected(true);
+
+            boton.setBackground(Color.BLACK);
+            boton.setEnabled(false); 
+        }
+    }
+
+    public String buscarArchivo() {
+        JFileChooser fileChooser = new JFileChooser();
+        String rutaArchivo = null;
+
+            fileChooser.setDialogTitle("Guardar archivo CSV");
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
+            int resultado = fileChooser.showSaveDialog(null);
+            if (resultado == JFileChooser.APPROVE_OPTION) {
+                File archivoSeleccionado = fileChooser.getSelectedFile();
+                // Asegurarse de que el archivo tenga la extensión .csv
+                if (!archivoSeleccionado.getName().endsWith(".csv")) {
+                    archivoSeleccionado = new File(archivoSeleccionado.getAbsolutePath() + ".csv");
+                }
+                rutaArchivo = archivoSeleccionado.getAbsolutePath();
+            }
+        
+        return rutaArchivo;
     }
 
     /**
@@ -144,7 +347,7 @@ public class Tablero extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Tablero().setVisible(true);
+                new Tablero(campo, DFS).setVisible(true);
             }
         });
     }

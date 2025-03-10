@@ -4,7 +4,9 @@
  */
 package proyecto1prietoa;
 
+import Ventanas.MenuPrincipal;
 import Ventanas.Tablero;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -40,8 +42,9 @@ public class Proyecto1PrietoA {
             }
             System.out.println();
         }
+        MenuPrincipal p = new MenuPrincipal();
+//        Tablero t = new Tablero();
         
-        Tablero t = new Tablero();
 }
     
     

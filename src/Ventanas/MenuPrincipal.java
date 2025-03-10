@@ -4,6 +4,11 @@
  */
 package Ventanas;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+import proyecto1prietoa.CampoMinas;
+import proyecto1prietoa.LectorCSV;
+
 /**
  *
  * @author andre
@@ -15,6 +20,21 @@ public class MenuPrincipal extends javax.swing.JFrame {
      */
     public MenuPrincipal() {
         initComponents();
+        this.setVisible(true);
+    }
+
+    public String buscarArchivo() {
+        JFileChooser fileChooser = new JFileChooser();
+        String rutaArchivo = null;
+        fileChooser.setDialogTitle("Seleccionar archivo CSV para leer");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
+        int resultado = fileChooser.showOpenDialog(null);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivoSeleccionado = fileChooser.getSelectedFile();
+            rutaArchivo = archivoSeleccionado.getAbsolutePath();
+        }
+
+        return rutaArchivo;
     }
 
     /**
@@ -42,16 +62,40 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("STHupo", 1, 36)); // NOI18N
         jButton1.setText("Cargar Partida");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 300, -1, -1));
 
         jButton2.setFont(new java.awt.Font("STHupo", 1, 36)); // NOI18N
         jButton2.setText("Jugar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 200, -1, -1));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 980, 590));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        Configuracion c = new Configuracion();
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        LectorCSV l = new LectorCSV();
+        CampoMinas c =l.leerPartidaCSV(this.buscarArchivo());
+        Tablero t = new Tablero(c, true);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
