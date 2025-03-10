@@ -36,14 +36,21 @@ import proyecto1prietoa.LectorCSV;
  *
  * @author Prietoalejo
  */
+/**
+ * Clase que representa la interfaz gráfica del juego Buscaminas.
+ */
 public class Tablero extends javax.swing.JFrame {
 
-    public static CampoMinas campo;
-    boolean bandera;
-    public static boolean DFS;
+    public static CampoMinas campo; // Campo de minas del juego
+    boolean bandera; // Indica si el modo de bandera está activado
+    public static boolean DFS; // Indica si se utiliza el algoritmo DFS
 
     /**
-     * Creates new form Tablero
+     * Constructor de la clase Tablero.
+     *
+     * @param campo El objeto CampoMinas que representa el estado del juego.
+     * @param DFS Indica si se debe usar el algoritmo de búsqueda en profundidad
+     * (DFS).
      */
     public Tablero(CampoMinas campo, boolean DFS) {
         initComponents();
@@ -54,47 +61,48 @@ public class Tablero extends javax.swing.JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Panel de fondo
         JPanel panelFondo = new JPanel();
         panelFondo.setBackground(Color.LIGHT_GRAY);
-        add(panelFondo, BorderLayout.CENTER); 
+        add(panelFondo, BorderLayout.CENTER);
 
+        // Panel superior que contiene el título y los botones
         JPanel panelSuperior = new JPanel();
-        panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.Y_AXIS)); 
+        panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.Y_AXIS));
         String modo;
-        if(this.DFS){
-          modo = "(DFS)";  
-        }else{
+        if (this.DFS) {
+            modo = "(DFS)";
+        } else {
             modo = "(BFS)";
         }
         JLabel titulo = new JLabel("Juego de Buscaminas");
-        titulo.setFont(new Font("STHupo", Font.BOLD, 48)); 
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT); 
+        titulo.setFont(new Font("STHupo", Font.BOLD, 48));
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelSuperior.add(titulo);
 
+        panelSuperior.add(Box.createRigidArea(new Dimension(0, 40)));
 
-        panelSuperior.add(Box.createRigidArea(new Dimension(0, 40))); 
-
-   
+        // Panel de botones
         JPanel panelBotones = new JPanel();
         panelBotones.setLayout(new FlowLayout(FlowLayout.CENTER));
 
+        // Botón para guardar la partida
         JButton btnGuardar = new JButton("Guardar Partida");
-        btnGuardar.setFont(new Font("STHupo", Font.PLAIN, 24)); 
+        btnGuardar.setFont(new Font("STHupo", Font.PLAIN, 24));
         btnGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 LectorCSV l = new LectorCSV();
                 l.guardarPartidaCSV(buscarArchivo(), campo);
                 System.out.println("Partida guardada.");
             }
         });
         panelBotones.add(btnGuardar);
-        panelBotones.add(Box.createRigidArea(new Dimension(10, 0))); 
+        panelBotones.add(Box.createRigidArea(new Dimension(10, 0)));
 
-
+        // Botón para salir del juego
         JButton btnSalir = new JButton("Salir");
-        btnSalir.setFont(new Font("STHupo", Font.PLAIN, 24)); 
+        btnSalir.setFont(new Font("STHupo", Font.PLAIN, 24));
         btnSalir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -103,56 +111,60 @@ public class Tablero extends javax.swing.JFrame {
             }
         });
         panelBotones.add(btnSalir);
-        panelBotones.add(Box.createRigidArea(new Dimension(10, 0))); 
+        panelBotones.add(Box.createRigidArea(new Dimension(10, 0)));
 
-     
+        // Botón para activar la bandera
         JToggleButton btnBandera = new JToggleButton("🏴");
-        btnBandera.setFont(new Font("DEFAULT", Font.PLAIN, 20)); 
-
+        btnBandera.setFont(new Font("DEFAULT", Font.PLAIN, 20));
         btnBandera.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                bandera = !bandera; 
-
+                bandera = !bandera; // Alterna el estado de la bandera
             }
         });
         panelBotones.add(btnBandera);
 
-  
         panelSuperior.add(panelBotones);
-
 
         panelFondo.setLayout(new BorderLayout());
         panelFondo.add(panelSuperior, BorderLayout.NORTH);
 
-        
+        // Crear el tablero
         JPanel tablero = crearTablero(campo.filas, campo.columnas);
 
-     
+        // Panel inferior que contiene el tablero
         JPanel panelInferior = new JPanel();
-        panelInferior.setLayout(new FlowLayout(FlowLayout.CENTER)); 
-
-    
+        panelInferior.setLayout(new FlowLayout(FlowLayout.CENTER));
         panelInferior.setPreferredSize(new Dimension(0, (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.7)));
-
         panelInferior.add(tablero);
 
-        panelFondo.add(panelInferior, BorderLayout.CENTER); 
+        panelFondo.add(panelInferior, BorderLayout.CENTER);
 
         setSize(Toolkit.getDefaultToolkit().getScreenSize());
         setVisible(true);
     }
 
+    /**
+     * Cierra la ventana del juego.
+     */
     public void salir() {
         this.dispose();
     }
 
+    /**
+     * Crea el tablero de juego como un panel de botones.
+     *
+     * @param filas Número de filas en el tablero.
+     * @param columnas Número de columnas en el tablero.
+     * @return Un JPanel que representa el tablero de juego.
+     */
     private JPanel crearTablero(int filas, int columnas) {
         JPanel panelTablero = new JPanel();
         panelTablero.setLayout(new GridLayout(filas, columnas));
 
+        // Calcular el tamaño de los botones del tablero
         int size = (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.6 / Math.max(filas, columnas));
-        panelTablero.setPreferredSize(new Dimension(size * columnas, size * filas)); 
+        panelTablero.setPreferredSize(new Dimension(size * columnas, size * filas));
 
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -160,7 +172,7 @@ public class Tablero extends javax.swing.JFrame {
                 JToggleButton boton = new JToggleButton(nombreCasilla);
                 boton.setName(nombreCasilla);
                 boton.setForeground(Color.black);
-                boton.setBackground(Color.LIGHT_GRAY); 
+                boton.setBackground(Color.LIGHT_GRAY);
                 boton.setOpaque(true);
                 boton.setPreferredSize(new Dimension(size, size));
                 marcarCasilla(boton, panelTablero);
@@ -173,13 +185,11 @@ public class Tablero extends javax.swing.JFrame {
                             if (bandera && !casilla.bandera) {
                                 boton.setText("🏴");
                                 boton.setForeground(Color.red);
-
                                 casilla.bandera = true;
                                 return;
                             } else if (bandera && casilla.bandera) {
                                 boton.setText(boton.getName());
                                 boton.setForeground(Color.black);
-
                                 casilla.bandera = false;
                                 return;
                             } else if (!bandera && casilla.bandera) {
@@ -197,7 +207,6 @@ public class Tablero extends javax.swing.JFrame {
 
                                 Casilla actual = lista.primera;
                                 while (actual != null) {
-   
                                     for (Component comp : panelTablero.getComponents()) {
                                         if (comp instanceof JToggleButton) {
                                             JToggleButton botonCasilla = (JToggleButton) comp;
@@ -207,17 +216,13 @@ public class Tablero extends javax.swing.JFrame {
 
                                                 if (minasAlrededor == 0) {
                                                     botonCasilla.setText(String.valueOf(""));
-
                                                 } else {
                                                     botonCasilla.setText(String.valueOf(minasAlrededor));
-
                                                 }
 
                                                 botonCasilla.setSelected(true);
-
                                                 botonCasilla.setBackground(Color.BLACK);
                                                 botonCasilla.setEnabled(false);
-
                                                 break;
                                             }
                                         }
@@ -225,19 +230,16 @@ public class Tablero extends javax.swing.JFrame {
                                     actual = actual.siguiente;
                                 }
                             }
-
                         } else {
                             Casilla casilla = campo.buscarID(boton.getName());
 
                             if (bandera && !casilla.bandera) {
                                 boton.setText("🏴");
                                 casilla.bandera = true;
-//                                boton.setEnabled(false);
                                 return;
                             } else if (bandera && casilla.bandera) {
                                 boton.setText(boton.getName());
                                 boton.setForeground(Color.black);
-
                                 casilla.bandera = false;
                                 return;
                             } else if (!bandera && casilla.bandera) {
@@ -253,12 +255,17 @@ public class Tablero extends javax.swing.JFrame {
         return panelTablero;
     }
 
+    /**
+     * Marca la casilla en el tablero según su estado.
+     *
+     * @param boton El botón que representa la casilla.
+     * @param panelTablero El panel que contiene el tablero.
+     */
     public void marcarCasilla(JToggleButton boton, JPanel panelTablero) {
         Casilla casilla = campo.buscarID(boton.getName());
         if (casilla.bandera) {
             boton.setText("🏴");
             boton.setForeground(Color.RED);
-
             boton.setSelected(true);
             return;
         }
@@ -266,38 +273,40 @@ public class Tablero extends javax.swing.JFrame {
             int minasAlrededor = campo.contarBombasAlrededor(casilla);
             if (minasAlrededor == 0) {
                 boton.setText(String.valueOf(""));
-
             } else {
                 boton.setText(String.valueOf(minasAlrededor));
-
             }
 
             boton.setSelected(true);
-
             boton.setBackground(Color.BLACK);
-            boton.setEnabled(false); 
+            boton.setEnabled(false);
         }
     }
 
+    /**
+     * Abre un cuadro de diálogo para guardar un archivo CSV y devuelve su ruta.
+     *
+     * @return La ruta del archivo seleccionado como una cadena, o null si no se
+     * seleccionó ningún archivo.
+     */
     public String buscarArchivo() {
         JFileChooser fileChooser = new JFileChooser();
         String rutaArchivo = null;
 
-            fileChooser.setDialogTitle("Guardar archivo CSV");
-            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
-            int resultado = fileChooser.showSaveDialog(null);
-            if (resultado == JFileChooser.APPROVE_OPTION) {
-                File archivoSeleccionado = fileChooser.getSelectedFile();
-                // Asegurarse de que el archivo tenga la extensión .csv
-                if (!archivoSeleccionado.getName().endsWith(".csv")) {
-                    archivoSeleccionado = new File(archivoSeleccionado.getAbsolutePath() + ".csv");
-                }
-                rutaArchivo = archivoSeleccionado.getAbsolutePath();
+        fileChooser.setDialogTitle("Guardar archivo CSV");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
+        int resultado = fileChooser.showSaveDialog(null);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivoSeleccionado = fileChooser.getSelectedFile();
+            // Asegurarse de que el archivo tenga la extensión .csv
+            if (!archivoSeleccionado.getName().endsWith(".csv")) {
+                archivoSeleccionado = new File(archivoSeleccionado.getAbsolutePath() + ".csv");
             }
-        
+            rutaArchivo = archivoSeleccionado.getAbsolutePath();
+        }
+
         return rutaArchivo;
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
