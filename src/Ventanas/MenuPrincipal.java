@@ -11,7 +11,7 @@ import proyecto1prietoa.LectorCSV;
 
 /**
  *
- * @author andre
+ * @author Prietoalejo
  */
 public class MenuPrincipal extends javax.swing.JFrame {
 
@@ -23,18 +23,25 @@ public class MenuPrincipal extends javax.swing.JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * Abre un cuadro de diálogo para seleccionar un archivo CSV y devuelve su ruta.
+     *
+     * @return La ruta del archivo seleccionado como una cadena, o null si no se seleccionó ningún archivo.
+     */
     public String buscarArchivo() {
-        JFileChooser fileChooser = new JFileChooser();
-        String rutaArchivo = null;
-        fileChooser.setDialogTitle("Seleccionar archivo CSV para leer");
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv"));
+        JFileChooser fileChooser = new JFileChooser(); // Crea un nuevo JFileChooser
+        String rutaArchivo = null; // Inicializa la variable para almacenar la ruta del archivo
+        fileChooser.setDialogTitle("Seleccionar archivo CSV para leer"); // Establece el título del cuadro de diálogo
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV Files", "csv")); // Filtra para mostrar solo archivos CSV
+
+        // Muestra el cuadro de diálogo y espera la selección del usuario
         int resultado = fileChooser.showOpenDialog(null);
-        if (resultado == JFileChooser.APPROVE_OPTION) {
-            File archivoSeleccionado = fileChooser.getSelectedFile();
-            rutaArchivo = archivoSeleccionado.getAbsolutePath();
+        if (resultado == JFileChooser.APPROVE_OPTION) { // Verifica si el usuario aprobó la selección
+            File archivoSeleccionado = fileChooser.getSelectedFile(); // Obtiene el archivo seleccionado
+            rutaArchivo = archivoSeleccionado.getAbsolutePath(); // Obtiene la ruta absoluta del archivo
         }
 
-        return rutaArchivo;
+        return rutaArchivo; // Retorna la ruta del archivo o null si no se seleccionó ninguno
     }
 
     /**
